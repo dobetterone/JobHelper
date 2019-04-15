@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+	<!-- TODO Add Nodes -->
+	<!-- BorderPane的上部分-->
+	<top>
+		<BorderPane fx:id="topPane" minHeight="10" prefHeight="100">
+			<!-- 这是菜单条存放的地方-->
+			<top>
+				<BorderPane fx:id="logobackgroud" maxHeight="20" minHeight="40" onMouseDragged="#caculateLocation" onMousePressed="#culateSpace" prefHeight="10">
+					<left>
+							<Label alignment="CENTER" prefHeight="40" prefWidth="40" text="Logo" />
+					</left>
+					<right>
+						<HBox fx:id="hboxBar" prefHeight="20" prefWidth="150.0">
+							<children>
+								<!-- hbox里面放3个label,3个label上面分别放了3张图片 -->
+								<Label fx:id="labelMin" alignment="CENTER" onMouseClicked="#minmizeWindow" onMouseEntered="#imgMinToWhite" onMouseExited="#imgMinToBlack" prefHeight="50" prefWidth="50">
+									<graphic>
+										<ImageView fx:id="imageMin" fitHeight="20" fitWidth="20" />
+									</graphic>
+								</Label>
+								<Label fx:id="labelMax" alignment="CENTER" onMouseClicked="#maximizeWindow" onMouseEntered="#imgMaxToWhite" onMouseExited="#imgMaxToBlack" prefHeight="50" prefWidth="50">
+									<graphic>
+										<ImageView fx:id="imageMax" fitHeight="20" fitWidth="20" />
+									</graphic>
+								</Label>
+								<Label fx:id="labelExit" alignment="CENTER" onMouseClicked="#exitWindow" onMouseEntered="#imgExitToWhite" onMouseExited="#imgExitToBlack" prefHeight="50" prefWidth="50">
+									<graphic>
+										<ImageView fx:id="imageExit" fitHeight="20" fitWidth="20" />
+									</graphic>
+								</Label>
+							</children>
+                   
+						</HBox>
+					</right>
+				</BorderPane>
+			</top>
+			<center>
+				<MenuBar>
+  					 <menus>
+   						<Menu fx:id="open" text="打开">
+     					 <items> 
+      						<MenuItem text="设置" />
+    					 </items>
+   						</Menu>
+  					 </menus>
+				</MenuBar>
+			</center>
+			<bottom>
+				<BorderPane minHeight="40" />
+			</bottom>
+		</BorderPane>
+	</top>
+	<!-- 总的borderpane的下部分 -->
+	<bottom>
+			
+			<BorderPane fx:id="bottomPane" prefHeight="100">
+							
+			</BorderPane>		
+	</bottom>
+	<!-- 总的borderpane的左部分 -->
+	<left>
+		  <BorderPane fx:id="leftPane" prefWidth="300">
+		    	<center>
+			    		<!-- 里面放一个scrollpane -->
+			    	<ScrollPane prefWidth="300">
+			    		<padding>
+			    				<Insets bottom="0" left="0" right="0" top="0" />
+			    		</padding>
+   <content>
+   			   			<TextArea prefHeight="1000" />
+   </content>
+			    	</ScrollPane>
+		    	</center>
+		  </BorderPane>
+	</left>
+	<!-- 总的borderpane的中部 -->
+	<center>
+		<BorderPane>
+			<center>
+				<TextArea fx:id="textArea">
+					<padding>
+						<Insets bottom="0" left="0" right="0" top="0" />
+					</padding>
+				</TextArea>
+			</center>
+		</BorderPane>
+	</center>
+</BorderPane>
