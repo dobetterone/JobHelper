@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.web.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.*?>
@@ -22,54 +23,79 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.shape.Box?>
-<BorderPane fx:id="rootPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+<?import javafx.scene.web.HTMLEditor?>
+<?import javafx.scene.layout.StackPane?>
+
+<BorderPane fx:id="rootPane"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.MainController">
 	<!-- TODO Add Nodes -->
-	<!-- BorderPane的上部分-->
+	<!-- BorderPane的上部分 -->
 	<top>
 		<BorderPane fx:id="topPane" minHeight="10" prefHeight="100">
-			<!-- 这是菜单条存放的地方-->
+			<!-- 这是菜单条存放的地方 -->
 			<top>
-				<BorderPane fx:id="logobackgroud" maxHeight="20" minHeight="40" onMouseDragged="#caculateLocation" onMousePressed="#culateSpace" prefHeight="10">
-					<left>
-							<Label alignment="CENTER" prefHeight="40" prefWidth="40" text="Logo" />
-					</left>
+				<BorderPane fx:id="logobackgroud" maxHeight="20"
+					minHeight="40" onMouseDragged="#caculateLocation"
+					onMousePressed="#culateSpace" prefHeight="10">
 					<right>
 						<HBox fx:id="hboxBar" prefHeight="20" prefWidth="150.0">
 							<children>
 								<!-- hbox里面放3个label,3个label上面分别放了3张图片 -->
-								<Label fx:id="labelMin" alignment="CENTER" onMouseClicked="#minmizeWindow" onMouseEntered="#imgMinToWhite" onMouseExited="#imgMinToBlack" prefHeight="50" prefWidth="50">
+								<Label fx:id="labelMin" alignment="CENTER"
+									onMouseClicked="#minmizeWindow" onMouseEntered="#imgMinToWhite"
+									onMouseExited="#imgMinToBlack" prefHeight="50" prefWidth="50">
 									<graphic>
-										<ImageView fx:id="imageMin" fitHeight="20" fitWidth="20" />
+										<ImageView fx:id="imageMin" fitHeight="20"
+											fitWidth="20" />
 									</graphic>
 								</Label>
-								<Label fx:id="labelMax" alignment="CENTER" onMouseClicked="#maximizeWindow" onMouseEntered="#imgMaxToWhite" onMouseExited="#imgMaxToBlack" prefHeight="50" prefWidth="50">
+								<Label fx:id="labelMax" alignment="CENTER"
+									onMouseClicked="#maximizeWindow"
+									onMouseEntered="#imgMaxToWhite" onMouseExited="#imgMaxToBlack"
+									prefHeight="50" prefWidth="50">
 									<graphic>
-										<ImageView fx:id="imageMax" fitHeight="20" fitWidth="20" />
+										<ImageView fx:id="imageMax" fitHeight="20"
+											fitWidth="20" />
 									</graphic>
 								</Label>
-								<Label fx:id="labelExit" alignment="CENTER" onMouseClicked="#exitWindow" onMouseEntered="#imgExitToWhite" onMouseExited="#imgExitToBlack" prefHeight="50" prefWidth="50">
+								<Label fx:id="labelExit" alignment="CENTER"
+									onMouseClicked="#exitWindow" onMouseEntered="#imgExitToWhite"
+									onMouseExited="#imgExitToBlack" prefHeight="50" prefWidth="50">
 									<graphic>
-										<ImageView fx:id="imageExit" fitHeight="20" fitWidth="20" />
+										<ImageView fx:id="imageExit" fitHeight="20"
+											fitWidth="20" />
 									</graphic>
 								</Label>
 							</children>
-                   
+
 						</HBox>
 					</right>
+					<left>
+						<ImageView fitHeight="40.0" fitWidth="66.0"
+							pickOnBounds="true" preserveRatio="true"
+							BorderPane.alignment="CENTER" />
+					</left>
 				</BorderPane>
 			</top>
 			<center>
 				<MenuBar>
-  					 <menus>
-   						<Menu fx:id="open" text="打开">
-     					 <items> 
-      						<MenuItem text="设置"  fx:id="settings" onAction="#settingOnMouseClicked"/>
-    					 </items>
-    					 <items>
-    					 	<MenuItem text="批量导入文件" fx:id="bulkImport" onAction="#importOnMouseClicked"></MenuItem>
-    					 </items>
-   						</Menu>
-  					 </menus>
+					<menus>
+						<Menu fx:id="open" text="打开">
+							<items>
+								<MenuItem fx:id="settings"
+									onAction="#settingOnMouseClicked" text="设置" />
+							</items>
+							<items>
+								<MenuItem fx:id="bulkImport"
+									onAction="#importOnMouseClicked" text="批量导入文件" />
+							</items>
+							<items>
+								<MenuItem fx:id="SelectWorkSpace" text="选择工作区间"
+									onAction="#SelectWorkSpace"></MenuItem>
+							</items>
+						</Menu>
+					</menus>
 				</MenuBar>
 			</center>
 			<bottom>
@@ -79,52 +105,55 @@
 	</top>
 	<!-- 总的borderpane的下部分 -->
 	<bottom>
-			
-			<BorderPane fx:id="bottomPane" prefHeight="100">
-						<left>
-							<BorderPane fx:id="bottompane_leftpane">
-								
-							</BorderPane>
-						</left>
-						<center>
-							<HBox fx:id="bottompane_centerpane">
-								
-							</HBox>
-						</center>
-						<right>
-							
-						</right>	
-			</BorderPane>		
+
+		<BorderPane fx:id="bottomPane" prefHeight="100">
+			<left>
+				<BorderPane fx:id="bottompane_leftpane">
+
+				</BorderPane>
+			</left>
+			<center>
+				<HBox fx:id="bottompane_centerpane">
+
+				</HBox>
+			</center>
+			<right>
+
+			</right>
+		</BorderPane>
 	</bottom>
 	<!-- 总的borderpane的左部分 -->
 	<left>
-		  <BorderPane fx:id="leftPane" prefWidth="300">
-		    	<center>
-			    		<!-- 里面放一个scrollpane -->
-			    	<ScrollPane prefWidth="300">
-			    		<padding>
-			    				<Insets bottom="0" left="0" right="0" top="0" />
-			    		</padding>
-  				 <content>
-   			   			<TextArea prefHeight="1000" />
-  				 </content>
-			    	</ScrollPane>
-		    	</center>
-		  </BorderPane>
+		<BorderPane fx:id="leftPane" prefWidth="300">
+			<center>
+				<!-- 里面放一个scrollpane -->
+				<ScrollPane prefWidth="300" fx:id="scrollPane">
+					<padding>
+						<Insets bottom="0" left="0" right="0" top="0" />
+					</padding>
+					<content>
+						<VBox fx:id="listVox">
+
+						</VBox>
+					</content>
+				</ScrollPane>
+			</center>
+		</BorderPane>
 	</left>
 	<!-- 总的borderpane的中部 -->
 	<center>
 		<BorderPane>
 			<top>
-		  		<Label text="计算机科学学院      2017级计科本三班 1733140337 张艺航" prefWidth="500"></Label>
-		  	</top>
+				<Label fx:id="StudentInfoLable" prefWidth="500" />
+			</top>
 			<center>
-				<TextArea fx:id="textArea">
-					<padding>
-						<Insets bottom="0" left="0" right="0" top="0" />
-					</padding>
-				</TextArea>
+				<StackPane fx:id="Contentsrollpane">
+
+				</StackPane>
 			</center>
 		</BorderPane>
 	</center>
+	<effect>
+		<InnerShadow color="#193bbf" />
+	</effect>
 </BorderPane>

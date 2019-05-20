@@ -25,9 +25,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import model.StudentModel;
 import service.ExchangeData;
 import service.impl.ExchangeDataImpl;
+import util.ModelInfoManagent;
 import util.MsonModel;
+import util.StageManagement;
 import util.StringUtil;
 import util.VboxUtil;
 
@@ -42,15 +45,17 @@ public class MsonController implements Initializable {
 	@FXML
 	BorderPane CcenterPane;
 	@FXML
-	TextField textFiledModelNum;
+	TextField textFiledColleaName;       //学院的名字
 	@FXML
-	TextField textFiledGradeName;
+	TextField textFiledModelNum;         //模块的个数
 	@FXML
-	TextField textFiledClassName;
+	TextField textFiledGradeName;      	//年级的名称
+	@FXML
+	TextField textFiledClassName;        //班级的名称
 	@FXML 
-	TextField textFiledModelName;
+	TextField textFiledModelName;        //模块的名字
 	@FXML
-	TextField textFiledModelAllScore;
+	TextField textFiledModelAllScore;    //每个模块的总分
 	@FXML
 	BorderPane CtopPane;
 	@FXML 
@@ -154,41 +159,51 @@ public class MsonController implements Initializable {
 	}
 	@FXML
 	public void transportData(ActionEvent event){//TODO  
+		//获取
+		String colleaName = textFiledColleaName.getText();//获取学院名
+		String gradeName = textFiledGradeName.getText();//获取年级名
+		String className = textFiledClassName.getText();//获取班级名
+		int modelNum = Integer.valueOf(textFiledModelNum.getText());//获取模块数
+		StudentModel studentModel = new StudentModel(colleaName, gradeName, className, modelNum);//封装成对象
+		
+		//System.out.println("TextAreaTest"+textField.getText());
+		//System.out.println("colleaName="+colleaName);
+		//System.out.println("gradeName="+gradeName);
+		//System.out.println("className="+className);
+		//System.out.println("modelNum="+modelNum);
 		//获取来之子窗体的数据
 		ExchangeData exchangeData = new ExchangeDataImpl();
+		//传递学生信息
 		try {
-			exchangeData.exchange(modelNum, moddelName, scoreList, gradeName, className);    
+			exchangeData.exchStuModlInf(studentModel);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//关闭子窗体
+		StageManagement.STAGE.get("stage").close();
 	}
 	@FXML
+	/***
+	 * 获取信息
+	 * @param event
+	 */
 	public void getModelInfo(ActionEvent event){//TODO
 		String modelNumStr = textFiledModelNum.getText();
-		StringUtil stringUtil = new StringUtil();
-		if(stringUtil.isNullOrEmpty(modelNumStr))
+		//StringUtil stringUtil = new StringUtil();
+		if(StringUtil.isNullOrEmpty(modelNumStr))
 			textFiledModelNum.setPromptText("请输入模块数！");
 		else
 			modelNum = Integer.parseInt(textFiledModelNum.getText());   //获取输入框中的模块数
 		//当多次点击创建的时候看msonVbox中是否有模块,反正重复创建
-		VboxUtil vboxUtil = new VboxUtil();
-		if(!vboxUtil.isNUll(MsonVbox)&&modelOldNum==modelNum)
+		//VboxUtil vboxUtil = new VboxUtil();
+		if(!VboxUtil.isNUll(MsonVbox)&&modelOldNum==modelNum)
 				return;
-		//moddelName = textFiledModelName.getText(); //获取模块的名称
-		//scoreList = null;//TODO        //每个模块的总分装入list
-		//gradeName = textFiledGradeName.getText();//获取年级的名字
-		//className = textFiledClassName.getText();//获取班级的名字
-		//System.out.println(modelNum);
 		//每次创建应当清空之前创建的
-		vboxUtil.clearVbox(MsonVbox);
+		VboxUtil.clearVbox(MsonVbox);
 		MsonModel msonModel = new MsonModel(modelNum);
-		//System.out.println(msonModel.createMasonModel().isEmpty());
 		MsonVbox.getChildren().addAll(msonModel.createMasonModel());
 		modelOldNum = modelNum;
 		MsonVbox.setSpacing(20);
-		//ModelScrollPane.setContent(value);
-		//msonModel.createMasonModel();
 	}
-	
 }

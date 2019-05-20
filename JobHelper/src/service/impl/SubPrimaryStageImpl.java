@@ -18,6 +18,8 @@ public class SubPrimaryStageImpl implements SubPrimaryStage{
 	@Override
 	public void openPrimaryStage() throws Exception {
 		Stage stage = new Stage();
+		//放入舞台管理器中
+		StageManagement.STAGE.put("stage", stage);
 		URL location = getClass().getResource("/resource/fxml/Mson.fxml");
 		FXMLLoader fxmlLoader = new FXMLLoader();
 		fxmlLoader.setLocation(location);

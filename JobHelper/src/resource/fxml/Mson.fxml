@@ -59,6 +59,7 @@
 						<children>
 							<!-- hbox里面放3个label,3个label上面分别放了3张图片 -->	
 							<TextField fx:id="textFiledModelNum" prefHeight="20.0" prefWidth="100.0" promptText="模块数"/>
+							<TextField fx:id="textFiledColleaName" prefHeight="20.0" prefWidth="80.0" promptText="学院"/>
 							<TextField fx:id="textFiledGradeName" prefHeight="20.0" prefWidth="70.0" promptText="年级"/>
 							<TextField fx:id="textFiledClassName" prefHeight="20.0" prefWidth="70.0" promptText="班级"/>
 						</children>

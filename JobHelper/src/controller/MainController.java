@@ -7,10 +7,29 @@ package controller;
  */
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
+
+import com.sun.xml.internal.bind.v2.runtime.Name;
+import com.teamdev.jxbrowser.chromium.Browser;
+import com.teamdev.jxbrowser.chromium.BrowserContext;
+import com.teamdev.jxbrowser.chromium.BrowserContextParams;
+import com.teamdev.jxbrowser.chromium.javafx.BrowserView;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +38,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -29,14 +49,27 @@ import javafx.scene.layout.BackgroundFill;
 
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.web.HTMLEditor;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import model.StudentModel;
+import service.MultImport;
 import service.SubPrimaryStage;
+import service.impl.ImportImpl;
 import service.impl.SubPrimaryStageImpl;
+import util.BrowserLoad;
+import util.CreateMainModel;
 import util.DrawInterface;
+import util.ModelInfoManagent;
+import util.StageManagement;
+import util.makeDefautWorkeSpace;
+import util.impl.BrowserLoadImpl;
 import util.impl.DrawUtil;
+import util.impl.makeDefaultWorkSpaceImpl;
 public class MainController implements Initializable {
 	@FXML
 	BorderPane rootPane;
@@ -77,7 +110,8 @@ public class MainController implements Initializable {
 	Stage primaryStage;
 	//输入域
 	@FXML
-	TextArea textArea;
+	ScrollPane scrollPane;
+	String all="";//仅仅测试用
 	@FXML
     BorderPane bottompane_leftpane;
 	@FXML
@@ -90,8 +124,32 @@ public class MainController implements Initializable {
 	//设置的菜单选项
 	@FXML 
 	MenuItem settings;
+	@FXML
+	Label testArea;
+	@FXML
+	HTMLEditor htmlEditor;
+	@FXML
+	StackPane Contentsrollpane;
+	@FXML
+	VBox listVox;
+	//工作区间的文件夹的路径
+	String WorkSpacePath;
+	BrowserContext  bc;
+	Browser browser2;
+	BrowserView browserView;
+	Map<Label, File> map_leftPane=new HashMap<Label,File>();//存放显示的label和文件 : label显示文件姓名，file为读取的文件
+	//默认的工作空间路径
+	private static final String workSpaPath="D://JobHelperWorkSpace";
+	//默认的jxBrowser的默认路径
+	private static final String jxBrFilePath="D://JobHelperWorkSpace//jxBrowser-data";
+	StudentModel studentModel;//学生信息
+	@FXML
+	Label StudentInfoLable; //显示学生信息的标签
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//mainController一加载便将mainController加入StageManagement
+		StageManagement.CONTROLLER.put("MainController", this);
+		StageManagement.STAGE.put("primaryStage", primaryStage);
 		//设置总BorderPane面板的背景
 		rootPane.setBackground(new Background(new BackgroundFill(Color.ANTIQUEWHITE,null, null)));
 		//设置BorderPane面板上部分的背景
@@ -108,32 +166,42 @@ public class MainController implements Initializable {
 		leftPane.setBackground(new Background(new BackgroundFill(Color.LIGHTSKYBLUE, null, null)));
 		bottompane_leftpane.setBackground(new Background(new BackgroundFill(Color.BISQUE, null,null)));
 		bottompane_leftpane.setPrefWidth(300);
+		//listVox.setBackground(new Background(new BackgroundFill(Color.AZURE, null, null)));
+		//scrollPane.setBackground(new Background(new BackgroundFill(Color.AZURE, null, null)));
 		Label label = new Label("你好");
 		TextField textField = new TextField();
 		List<Node>list = new ArrayList<>();
-		list.add(textField);
+		//list.add(textField);
 		list.add(label);
 		//TODO
-		bottompane_centerpane.getChildren().add(model("现状分析"));
-		bottompane_centerpane.getChildren().add(model("学习目标"));
-		bottompane_centerpane.getChildren().add(model("未来目标"));
-		bottompane_centerpane.getChildren().add(model("短期计划"));
-		bottompane_centerpane.getChildren().add(model("长期计划"));
-		bottompane_centerpane.getChildren().add(model("专业分析"));
-		bottompane_centerpane.getChildren().add(model("专业前景"));
-		bottompane_centerpane.setSpacing(60);
-		bottompane_centerpane.setPadding(new Insets(20, 0, 0, 20));
-		//Dimension scrSize=Toolkit.getDefaultToolkit().getScreenSize(); 
-		//System.out.println("hight="+scrSize.height);
-		/*
-		DrawInterface drawInterface = new DrawUtil();
+		//bottompane_centerpane.getChildren().add(model("现状分析"));
+		//bottompane_centerpane.getChildren().add(model("学习目标"));
+		//bottompane_centerpane.getChildren().add(model("未来目标"));
+		//bottompane_centerpane.getChildren().add(model("短期计划"));
+		//bottompane_centerpane.getChildren().add(model("长期计划"));
+		//bottompane_centerpane.getChildren().add(model("专业分析"));
+		//bottompane_centerpane.getChildren().add(model("专业前景"));
+		//bottompane_centerpane.setSpacing(60);
+		//bottompane_centerpane.setPadding(new Insets(20, 0, 0, 20));
+		
+		//默认的工作区间
+		/***
+		 * 如果用户没有选择工作区间，则我们默认的工作区间为D:/JobHelperWorkSpace
+		 * JobHelperWorkSpace下面有一个jxBrowser-data的文件夹是存放jxBrowser的文件 
+		 */
+		//构建一个默认工作空间
+		makeDefautWorkeSpace makeDefautWorkeSpace = new makeDefaultWorkSpaceImpl();
 		try {
-			drawInterface.addDrawFunc();          //窗体拉伸
+			makeDefautWorkeSpace.makeDaufWorkSpa(workSpaPath,jxBrFilePath);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			System.out.println("创建默认工作区间失败！！！");
 			e.printStackTrace();
 		}
-		*/
+		//加载浏览器
+		bc = new BrowserContext(new BrowserContextParams("jxBrFilePath"));
+		browser2 = new Browser(bc);
+		browserView = new BrowserView(browser2);
+		Contentsrollpane.getChildren().add(browserView);
 	}
 	
 	/***
@@ -252,6 +320,7 @@ public class MainController implements Initializable {
 	 */
 	@FXML
 	public void exitWindow(MouseEvent event) {
+		primaryStage.close();
 		System.exit(0);
 	}
 	/***
@@ -282,7 +351,15 @@ public class MainController implements Initializable {
 	public void importOnMouseClicked(ActionEvent event){
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("批量导入");
-		fileChooser.showOpenDialog(primaryStage);
+		DirectoryChooser directoryChooser=new DirectoryChooser();
+		File file= directoryChooser.showDialog(primaryStage);
+		MultImport multImport = new ImportImpl();
+		try {
+			multImport.importFile(file,map_leftPane, listVox,scrollPane,browser2);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	@FXML
 	public void settingOnMouseClicked(ActionEvent event){
@@ -294,19 +371,48 @@ public class MainController implements Initializable {
 			e.printStackTrace();
 		}
 	}
-	public VBox model(String name) {
-		VBox vBox = new VBox();
-		Label label = new Label(name);//TODO
-		label.setPrefWidth(60);
-		label.setBackground(new Background(new BackgroundFill(Color.CADETBLUE,null, null)));
-		TextField textField = new TextField();
-		textField.setMinWidth(0);
-		textField.setPrefWidth(60);
-		List<Node>list = new ArrayList<>();
-		list.add(label);
-		list.add(textField);
-		vBox.getChildren().addAll(list);
-		return vBox;
+	/***
+	 * 仅仅是一个测试用的方法
+	 * @param event
+	 * @throws IOException 
+	 */
+	@FXML
+	public void test(MouseEvent event) throws IOException{
+		//TODO根据选择的路径，去加载相应的html文件
+		browser2.loadURL("file:///"+workSpaPath+"/Wtest.html");
+	}
+	@FXML
+	public void SelectWorkSpace() {
+		DirectoryChooser directoryChooser=new DirectoryChooser();
+		File file = directoryChooser.showDialog(primaryStage);
+		WorkSpacePath = file.getPath();
+		System.out.println(WorkSpacePath);
 	}
 	
+	public void getStuModlInfo(StudentModel studentModel) {
+		this.studentModel = studentModel;
+		String colleaName = studentModel.getColleaName();
+		//System.out.println("colleage="+colleaName);
+		String gradeName = studentModel.getGradeName();
+		String className = studentModel.getClassName();
+		//将学生信息学生信息标签
+		StudentInfoLable.setText(colleaName+gradeName+className);
+		//产生模块之前需要清空（防止第二次操作时，将第一次的模块加入）
+		bottompane_centerpane.getChildren().clear();
+		//主界面产生模块
+		//首先获取模块数
+		int modelNum = studentModel.getModelNum();
+		//循环获取模块数
+		for(int i=1;i<=modelNum;i++) {
+			//获取模块名字
+			String modelName = ModelInfoManagent.modepNameMap.get(i).getText();
+			//获取每个模块的总分
+			String modelAllScore = ModelInfoManagent.modelAllScoreMap.get(i).getText();
+			//产生一个模块并且装入
+			bottompane_centerpane.getChildren().add(CreateMainModel.model(modelName+"["+modelAllScore+"]"));
+		}
+		
+		bottompane_centerpane.setSpacing(60);
+		bottompane_centerpane.setPadding(new Insets(20, 0, 0, 20));
+	}
 }
